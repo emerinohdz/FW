@@ -1,7 +1,14 @@
-# include common functions
-@include "/etc/ferm.d/lib/common.ferm";
+# 
+# Ferm Framework
+# Author: Edgar Merino <emerino at gmail dot com>
+#
+# This is the main file that will be loaded by FERM.
+# It sets policies for the 3 different chain in the
+# filter table and loads any executable ferm module
+# included under the filters directory.
 
-@def $DIR_FILTERS = "/etc/ferm.d/filters";
+# include common functions
+@include "/etc/ferm.d/lib/lang.ferm";
 
 # POLICY
 &POLICY(INPUT, DROP);
@@ -12,4 +19,5 @@
 &INPUT(lo) ACCEPT;
 
 # FILTERS AND ROUTING RULES
-@include "/etc/ferm.d/tools/rules_creator.sh $DIR_FILTERS|";
+@def $DIR_MODULES = "/etc/ferm.d/modules";
+@include "/etc/ferm.d/tools/rules_creator.sh $DIR_MODULES|";

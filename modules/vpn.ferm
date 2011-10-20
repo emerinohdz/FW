@@ -7,8 +7,8 @@
 # filtering and routing too.
 #
 
-@include '/etc/ferm.d/lib/common.ferm';
-@include '/etc/ferm.d/lib/router.ferm';
+@include '/etc/ferm.d/lib/lang.ferm';
+@include '/etc/ferm.d/lib/route.ferm';
 
 @def $DEV_INTRANET = eth0;
 @def $DEV_INTERNET = tun1;
@@ -21,10 +21,10 @@
 @def $DEV_WINVPN = ppp+; # PPTP and L2TP
 @def $NET_WINVPN = 192.168.33.0/24;
 
-# filtering rules
+# Mark NET_WINVPN as a trusted network for DEV_WINVPN
 &INPUT($DEV_WINVPN) &TRUST($NET_WINVPN);
 	
-# routing
+# Routing
 &ROUTE($DEV_WINVPN, $NET_WINVPN, $DEV_INTRANET); # Route to the INTRANET
 &ROUTE($DEV_WINVPN, $NET_WINVPN, $DEV_INTERNET); # Route to the INTERNET
 
@@ -36,9 +36,9 @@
 @def $DEV_OPENVPN = tun0; 
 @def $NET_OPENVPN = 192.168.100.0/24;
 
-# filtering
+# Mark NET_OPENVPN as a trusted network for DEV_OPENVPN
 &INPUT($DEV_OPENVPN) &TRUST($NET_OPENVPN);
 
-# routing
+# Routing rules
 &ROUTE($DEV_OPENVPN, $NET_OPENVPN, $DEV_INTRANET); # Route to the INTRANET
 &ROUTE($DEV_OPENVPN, $NET_OPENVPN, $DEV_INTERNET); # Route to the INTERNET

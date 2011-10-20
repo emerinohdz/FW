@@ -1,30 +1,57 @@
 #
-# FUNCIONES DE UTILIDAD
+# FW lang functions.
+# 
+# These functions are used to abstract and simplify the creation 
+# of new rules. 
+#
+# ALIASES define functions that are used to simplify or abstract
+# the creation of rules, they can be used anywhere in the rule
+# (if the alias allows it) but need an ACTION in the end.
+#
+# ACTIONS define functions that can only be used at the end of
+# a rule.
 #
 
-@def $RESERVED_IPS = `cat /etc/ferm.d/RESERVED_IPS`; # ips reservadas
 
-# Connection tracking
-#
-# This function provides connection tracking in the specified $table
-# for the specified $chain.
-@def &CONN_TRACK() = {
-	mod state state INVALID DROP;
-	mod state state (ESTABLISHED RELATED) ACCEPT;
-}
+# Reserved IPS to be used for anti spoof protection
+@def $RESERVED_IPS = `cat /etc/ferm.d/RESERVED_IPS`; 
 
+
+#########################################################################
+# ALIASES
+#########################################################################
+
+# Abstract insertion of rule into table filter chain INPUT
 @def &INPUT($dev) = table filter chain INPUT @if @ne($dev, any) interface $dev;
 
+# Abstract saddr
 @def &FROM($saddr) = saddr $saddr;
 
+# Abstract daddr
 @def &TO($daddr) = daddr $daddr;
 
+
+#########################################################################
+# ACTIONS
+#########################################################################
+
+# Define policy to be used in $chain by default. 
+# Also, enable connection tracking in the specified chain.
 @def &POLICY($chain, $default) = {
 	table filter chain $chain {
 		policy $default;
 
 		@if @ne($default, ACCEPT) &CONN_TRACK();
 	}
+}
+
+# Connection tracking
+#
+# This function provides connection tracking for the table and
+# chain that uses includes it.
+@def &CONN_TRACK() = {
+	mod state state INVALID DROP;
+	mod state state (ESTABLISHED RELATED) ACCEPT;
 }
 
 # ACCEPT TRAFFIC IN PROTOCOL $proto AND SPORT $sport DPORT $dport
@@ -49,19 +76,25 @@
 	@else proto $proto sport $sport dport $dport ACCEPT;
 }
 
+# Mark $network as trusted.
 @def &TRUST($network) = {
-	saddr $network ACCEPT;
+	saddr $network daddr $network ACCEPT;
 }
 
+# Set some rules for spoof protection.
 @def &ANTI_SPOOFING() = {
 	@subchain { saddr $RESERVED_IPS DROP; }
 }
 
+# Reject ICMP request with the specified $response
 @def &ICMP_REJECT($response) = {
 	proto icmp REJECT reject-with $response; 
 }
 
-# Everything here gets logged
+# Add some simple protection to the interface where this action
+# gets called.
+#
+# Everything here gets logged.
 @def &PROTECT() = {
 	# drop new packets without SYN
 	proto tcp ! syn mod state state NEW LOG;

@@ -1,8 +1,10 @@
 #
 # PROTOCOLS
 #
+# Define actions for known protocols to be reused by modules.
+#
 
-@include "common.ferm";
+@include "lang.ferm";
 
 @def &ACCEPT_PPTP() = {
 	&ACCEPT(tcp, safe, 1723);

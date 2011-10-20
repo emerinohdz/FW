@@ -5,10 +5,10 @@
 # Firewall rules for virtualbox.
 #
 
-@include '/etc/ferm.d/lib/common.ferm';
-@include '/etc/ferm.d/lib/router.ferm';
+@include '/etc/ferm.d/lib/lang.ferm';
+@include '/etc/ferm.d/lib/route.ferm';
 
-# Variables definitions
+# Variable definitions
 @def $DEV_VBOX = vboxnet0;
 @def $NET_VBOX = 192.168.10.0/24;
 @def $HOST_VWIN = 192.168.10.20;
@@ -17,7 +17,7 @@
 @def $DEV_INTERNET = tun1;
 
 
-# Filtering rules
+# Mark NET_VBOX as a trusted network for DEV_VBOX
 &INPUT($DEV_VBOX) &TRUST($NET_VBOX);
 
 # Routing rules
@@ -25,5 +25,5 @@
 &ROUTE($DEV_VBOX, $NET_VBOX, $DEV_INTERNET); # Route to the INTERNET
 
 # Forward traffic
-&DNAT($DEV_INTRANET, (tcp udp), 3675, $DEV_VBOX, $HOST_VWIN);
-&DNAT($DEV_INTRANET, (tcp udp), 5500, $DEV_VBOX, $HOST_VWIN);
+&DNAT($DEV_INTRANET, (tcp udp), 3675, $DEV_VBOX, $HOST_VWIN); # Ares
+&DNAT($DEV_INTRANET, (tcp udp), 5500, $DEV_VBOX, $HOST_VWIN); # UltraVNC

@@ -1,5 +1,10 @@
+#
 # ROUTING FUNCTIONS
+#
+# These functions define routing actions.
 
+
+# NAT 
 @def &ROUTE($from, $network, $to) = {
 	# allow forwarding from DEV_VBOX and DEV_PRIVATE to everywhere
 	table filter chain FORWARD interface $from saddr $network ACCEPT;
@@ -8,6 +13,7 @@
 	table nat chain POSTROUTING saddr $network outerface $to MASQUERADE;
 }
 
+# PORT FORWARDING
 @def &DNAT($from, $proto, $port, $to, $dest) = {
 	# forward rule
     table filter chain FORWARD interface $from outerface $to daddr $dest proto $proto dport $port ACCEPT;

@@ -6,13 +6,13 @@
 # through an openvpn client, we consider this network trusted.
 #
 
-@include "/etc/ferm.d/lib/common.ferm";
+@include "/etc/ferm.d/lib/lang.ferm";
 
 # Variable definitions
 @def $DEV_INTERNET = tun1;
 @def $NET_INTERNET = 192.168.0.0/24;
 
 
-# Accept everything coming from iface DEV_INTERNET and network NET_INTERNET  
+# Mark NET_INTERNET as a trusted network for DEV_INTERNET
 &INPUT($DEV_INTERNET) &TRUST($NET_INTERNET);
 
