@@ -18,7 +18,7 @@
 
 
 # Filtering rules
-chain (INPUT OUTPUT) interface $DEV_VBOX &TRUST($NET_VBOX);
+chain INPUT interface $DEV_VBOX &TRUST($NET_VBOX);
 
 # Routing rules
 &ROUTE($DEV_VBOX, $NET_VBOX, $DEV_INTRANET); # Route to the INTRANET

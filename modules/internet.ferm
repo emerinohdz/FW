@@ -14,5 +14,5 @@
 
 
 # Accept everything coming from iface DEV_INTERNET and network NET_INTERNET  
-chain (INPUT OUTPUT) interface $DEV_INTERNET &TRUST($NET_INTERNET);
+chain INPUT interface $DEV_INTERNET &TRUST($NET_INTERNET);
 

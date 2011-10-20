@@ -22,7 +22,7 @@
 @def $NET_WINVPN = 192.168.33.0/24;
 
 # filtering rules
-chain (INPUT OUTPUT) interface $DEV_WINVPN &TRUST($NET_WINVPN);
+chain INPUT interface $DEV_WINVPN &TRUST($NET_WINVPN);
 	
 # routing
 &ROUTE($DEV_WINVPN, $NET_WINVPN, $DEV_INTRANET); # Route to the INTRANET
@@ -37,7 +37,7 @@ chain (INPUT OUTPUT) interface $DEV_WINVPN &TRUST($NET_WINVPN);
 @def $NET_OPENVPN = 192.168.100.0/24;
 
 # filtering
-chain (INPUT OUTPUT) interface $DEV_OPENVPN &TRUST($NET_OPENVPN);
+chain INPUT interface $DEV_OPENVPN &TRUST($NET_OPENVPN);
 
 # routing
 &ROUTE($DEV_OPENVPN, $NET_OPENVPN, $DEV_INTRANET); # Route to the INTRANET
