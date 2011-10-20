@@ -78,7 +78,7 @@
 
 # Mark $network as trusted.
 @def &TRUST($network) = {
-	saddr $network daddr $network ACCEPT;
+	saddr $network ACCEPT;
 }
 
 # Set some rules for spoof protection.
