@@ -12,7 +12,7 @@
 
 @def &ACCEPT_L2TP_IPSEC() = {
 	&ACCEPT(50, any, any); # Accept protocol 50
-	&ACCEPT(udp, safe, (500 4500));
+	&ACCEPT(udp, any, (500 4500));
 	proto udp dport 1701 mod policy dir in pol ipsec ACCEPT;
 }
 

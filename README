@@ -1,14 +1,10 @@
-FW v0.1
-Ferm based framework
-
-
-FW is a framework based in FERM (http://ferm.foo-projects.org/) that
+FW is a framework based on FERM (http://ferm.foo-projects.org/) that
 aims to simplify even further the creation and organization of linux
 firewalls.
 
 It consists of a small API for defining rules and a filesystem hierarchy
-to manage firewalls, as well as modules, tools and one single entry point:
-firewall.ferm. 
+of files to manage firewalls, as well as modules, tools and one single 
+entry point: firewall.ferm.
 
 The main entry point, firewall.ferm, defines default policies for the 3
 different chains in the filter table, allows local incoming traffic and
@@ -22,7 +18,6 @@ Only one tool is included at this time, and it's a SH script that helps
 in deciding which modules are activated.
 
 The API can be used standalone, and is divided into tree components:
-
 	lang.ferm:		Defines aliases and actions for rule creation.
 	route.ferm:		Defines routing functions for rule creation.
 	protocols.ferm: Defines actions for well known protocols.

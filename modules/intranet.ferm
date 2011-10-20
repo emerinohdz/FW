@@ -35,6 +35,8 @@
 		&ACCEPT_PPTP();
 
 		# L2TP server
-		&TO(10.2.0.37) &ACCEPT_L2TP_IPSEC();
+		&ACCEPT_L2TP_IPSEC();
+		#&ACCEPT(udp, any, 500);
+		#&ACCEPT(udp, any, 4500);
 	}
 }
