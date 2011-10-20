@@ -13,6 +13,20 @@
 	mod state state (ESTABLISHED RELATED) ACCEPT;
 }
 
+@def &INPUT($dev) = table filter chain INPUT @if @ne($dev, any) interface $dev;
+
+@def &FROM($saddr) = saddr $saddr;
+
+@def &TO($daddr) = daddr $daddr;
+
+@def &POLICY($chain, $default) = {
+	table filter chain $chain {
+		policy $default;
+
+		@if @ne($default, ACCEPT) &CONN_TRACK();
+	}
+}
+
 # ACCEPT TRAFFIC IN PROTOCOL $proto AND SPORT $sport DPORT $dport
 # $dport can be: (any, safe, NUMBER)
 #

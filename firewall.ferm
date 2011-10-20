@@ -1,24 +1,12 @@
 # include common functions
-@include '/etc/ferm.d/lib/common.ferm';
+@include "/etc/ferm.d/lib/common.ferm";
+
+@def $DIR_FILTERS = "/etc/ferm.d/filters";
 
 # POLICY
-table filter {
-	chain INPUT {
-		policy DROP;
+&POLICY(INPUT, DROP);
+&POLICY(FORWARD, DROP);
+&POLICY(OUTPUT, ACCEPT);
 
-		# connection tracking
-		&CONN_TRACK();
-	}
-
-	chain FORWARD {
-		policy DROP;
-
-		# connection tracking
-		&CONN_TRACK();
-	}
-
-	# allow everything out in all the interfaces
-	chain OUTPUT policy ACCEPT;
-}
-
-@include '/etc/ferm.d/modules/';
+# FILTERS AND ROUTING RULES
+@include "/etc/ferm.d/tools/rules_creator.sh $DIR_FILTERS|";
