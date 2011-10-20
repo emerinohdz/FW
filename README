@@ -28,4 +28,4 @@ The API can be used standalone, and is divided into tree components:
 	protocols.ferm: Defines actions for well known protocols.
 
 For FW to work, you need to unpack it under the directory /etc/ferm.d
-(although this can be changed is not recommended).
+(although this can be changed but is not recommended).
