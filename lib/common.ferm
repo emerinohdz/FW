@@ -1,0 +1,68 @@
+#
+# FUNCIONES DE UTILIDAD
+#
+
+@def $RESERVED_IPS = `cat /etc/ferm.d/RESERVED_IPS`; # ips reservadas
+
+# Connection tracking
+#
+# This function provides connection tracking in the specified $table
+# for the specified $chain.
+@def &CONN_TRACK() = {
+	mod state state INVALID DROP;
+	mod state state (ESTABLISHED RELATED) ACCEPT;
+}
+
+# ACCEPT TRAFFIC IN PROTOCOL $proto AND SPORT $sport DPORT $dport
+# $dport can be: (any, safe, NUMBER)
+#
+# where:
+#	any = any port
+#	safe = safe ports (1024-65535)
+#	NUMBER = a number or range of numbers
+@def &ACCEPT($proto, $sport, $dport) = {
+	@if @eq($sport, $dport) @if @eq($dport, any) proto $proto ACCEPT;
+
+	# port can be anything
+	@else @if @eq($sport, any) proto $proto dport $dport ACCEPT;
+	@else @if @eq($dport, any) proto $proto sport $sport ACCEPT;
+
+	# port can only be > 1024
+	@else @if @eq($sport, safe) proto $proto dport $dport sport 1024:65535 ACCEPT;
+	@else @if @eq($dport, safe) proto $proto sport $sport dport 1024:65535 ACCEPT;
+
+	# Destination port is $dport
+	@else proto $proto sport $sport dport $dport ACCEPT;
+}
+
+@def &TRUST($network) = {
+	saddr $network ACCEPT;
+}
+
+@def &ANTI_SPOOFING() = {
+	@subchain { saddr $RESERVED_IPS DROP; }
+}
+
+@def &ICMP_REJECT($response) = {
+	proto icmp REJECT reject-with $response; 
+}
+
+# Everything here gets logged
+@def &PROTECT() = {
+	# drop new packets without SYN
+	proto tcp ! syn mod state state NEW LOG;
+	proto tcp ! syn mod state state NEW DROP;
+
+	# drop fragmented packets
+	fragment LOG;
+	fragment DROP;
+
+	# drop XMAS packets
+	proto tcp tcp-flags ALL ALL LOG;
+	proto tcp tcp-flags ALL ALL DROP;
+
+	# drop NULL packets
+	proto tcp tcp-flags ALL NONE LOG;
+	proto tcp tcp-flags ALL NONE DROP;
+}
+

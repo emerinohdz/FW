@@ -1,0 +1,44 @@
+#
+# VPN
+# (Trusted)
+#
+# Firewall rules for our vpns. Since we are acting as a
+# VPN server for 3 different protocols, we need to do some
+# filtering and routing too.
+#
+
+@include '/etc/ferm.d/lib/common.ferm';
+@include '/etc/ferm.d/lib/router.ferm';
+
+@def $DEV_INTRANET = eth0;
+@def $DEV_INTERNET = tun1;
+
+
+################################################
+# WINVPN (PPTP and L2TP)
+################################################
+
+@def $DEV_WINVPN = ppp+; # PPTP and L2TP
+@def $NET_WINVPN = 192.168.33.0/24;
+
+# filtering rules
+chain (INPUT OUTPUT) interface $DEV_WINVPN &TRUST($NET_WINVPN);
+	
+# routing
+&ROUTE($DEV_WINVPN, $NET_WINVPN, $DEV_INTRANET); # Route to the INTRANET
+&ROUTE($DEV_WINVPN, $NET_WINVPN, $DEV_INTERNET); # Route to the INTERNET
+
+
+################################################
+# OPENVPN
+################################################
+
+@def $DEV_OPENVPN = tun0; 
+@def $NET_OPENVPN = 192.168.100.0/24;
+
+# filtering
+chain (INPUT OUTPUT) interface $DEV_OPENVPN &TRUST($NET_OPENVPN);
+
+# routing
+&ROUTE($DEV_OPENVPN, $NET_OPENVPN, $DEV_INTRANET); # Route to the INTRANET
+&ROUTE($DEV_OPENVPN, $NET_OPENVPN, $DEV_INTERNET); # Route to the INTERNET

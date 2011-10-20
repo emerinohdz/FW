@@ -1,0 +1,49 @@
+#
+# INTRANET
+# (Untrusted)
+#
+# Firewall rules for the intranet
+#
+
+@include '/etc/ferm.d/lib/common.ferm';
+
+# Variables definitions
+@def $DEV_INTRANET = eth0;
+@def $NET_INTRANET = 10.0.0.0/8;
+
+
+#
+# Filter rules
+#
+chain INPUT interface $DEV_INTRANET {
+	# add some simple protection
+	&PROTECT();
+
+	# avoid spoofing and possible DoS attacks
+	&ANTI_SPOOFING();
+
+	# Respondemos a peticiones de ping ICMP NET UNREACHABLE
+	&ICMP_REJECT(icmp-net-unreachable);
+
+	# Filter traffic from NET_INTRANET
+	saddr $NET_INTRANET {
+		&ACCEPT(udp, 67, 68);
+		
+		# remote windows boxes
+		#saddr (10.2.4.117 10.1.41.17) proto (tcp udp) dport (137 138 139 445) ACCEPT;
+
+		# ssh
+		&ACCEPT(tcp, safe, ssh);
+
+		# PPTP server
+		&ACCEPT(tcp, safe, 1723);
+
+		# L2TP server
+		daddr 10.2.0.37 {
+			&ACCEPT(50, any, any); # Accept port 50
+			&ACCEPT(udp, safe, 500);
+			&ACCEPT(udp, safe, 4500);
+			proto udp dport 1701 mod policy dir in pol ipsec ACCEPT;
+		}
+	}
+}

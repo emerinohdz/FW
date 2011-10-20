@@ -1,0 +1,18 @@
+#
+# INTERNET 
+# (Trusted)
+#
+# Firewall rules for the internet, since we are accessing 
+# through an openvpn client, we consider this network trusted.
+#
+
+@include '/etc/ferm.d/lib/common.ferm';
+
+# Variables definitions
+@def $DEV_INTERNET = tun1;
+@def $NET_INTERNET = 192.168.0.0/24;
+
+
+# Accept everything coming from iface DEV_INTERNET and network NET_INTERNET  
+chain (INPUT OUTPUT) interface $DEV_INTERNET &TRUST($NET_INTERNET);
+

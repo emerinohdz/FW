@@ -1,0 +1,24 @@
+# include common functions
+@include '/etc/ferm.d/lib/common.ferm';
+
+# POLICY
+table filter {
+	chain INPUT {
+		policy DROP;
+
+		# connection tracking
+		&CONN_TRACK();
+	}
+
+	chain FORWARD {
+		policy DROP;
+
+		# connection tracking
+		&CONN_TRACK();
+	}
+
+	# allow everything out in all the interfaces
+	chain OUTPUT policy ACCEPT;
+}
+
+@include '/etc/ferm.d/modules/';

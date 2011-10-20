@@ -1,0 +1,29 @@
+#
+# VIRTUALBOX
+# (Trusted)
+#
+# Firewall rules for virtualbox.
+#
+
+@include '/etc/ferm.d/lib/common.ferm';
+@include '/etc/ferm.d/lib/router.ferm';
+
+# Variables definitions
+@def $DEV_VBOX = vboxnet0;
+@def $NET_VBOX = 192.168.10.0/24;
+@def $HOST_VWIN = 192.168.10.20;
+
+@def $DEV_INTRANET = eth0;
+@def $DEV_INTERNET = tun1;
+
+
+# Filtering rules
+chain (INPUT OUTPUT) interface $DEV_VBOX &TRUST($NET_VBOX);
+
+# Routing rules
+&ROUTE($DEV_VBOX, $NET_VBOX, $DEV_INTRANET); # Route to the INTRANET
+&ROUTE($DEV_VBOX, $NET_VBOX, $DEV_INTERNET); # Route to the INTERNET
+
+# Forward traffic
+&FORWARD($DEV_INTRANET, (tcp udp), 3675, $DEV_VBOX, $HOST_VWIN);
+&FORWARD($DEV_INTRANET, (tcp udp), 5500, $DEV_VBOX, $HOST_VWIN);
