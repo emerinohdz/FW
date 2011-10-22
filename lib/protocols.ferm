@@ -7,12 +7,13 @@
 @include "lang.ferm";
 
 @def &ACCEPT_PPTP() = {
-	&ACCEPT(tcp, safe, 1723);
+	&ACCEPT(tcp, any, 1723);
 }
 
 @def &ACCEPT_L2TP_IPSEC() = {
 	&ACCEPT(50, any, any); # Accept protocol 50
-	&ACCEPT(udp, any, (500 4500));
+	&ACCEPT(udp, 4500, 4500);
+	&ACCEPT(udp, 500, 500);
 	proto udp dport 1701 mod policy dir in pol ipsec ACCEPT;
 }
 

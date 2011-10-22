@@ -22,7 +22,8 @@
 	&ANTI_SPOOFING();
 
 	# Respondemos a peticiones de ping ICMP NET UNREACHABLE
-	&ICMP_REJECT(icmp-net-unreachable);
+	&ICMP_REJECT(icmp-host-unreachable);
+#	&ACCEPT(icmp, any, any);
 
 	# Filter traffic from NET_INTRANET
 	&FROM($NET_INTRANET) {
